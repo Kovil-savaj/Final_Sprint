@@ -16,28 +16,56 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
-     * Find user by username.
+     * Find user by username (case-insensitive).
+     * @param username the username to search for
+     * @return Optional containing the user if found
+     */
+    Optional<User> findByUsernameIgnoreCase(String username);
+
+    /**
+     * Find user by username (case-sensitive - for backward compatibility).
      * @param username the username to search for
      * @return Optional containing the user if found
      */
     Optional<User> findByUsername(String username);
 
     /**
-     * Find user by email.
+     * Find user by email (case-insensitive).
+     * @param email the email to search for
+     * @return Optional containing the user if found
+     */
+    Optional<User> findByEmailIgnoreCase(String email);
+
+    /**
+     * Find user by email (case-sensitive - for backward compatibility).
      * @param email the email to search for
      * @return Optional containing the user if found
      */
     Optional<User> findByEmail(String email);
 
     /**
-     * Check if user exists by username.
+     * Check if user exists by username (case-insensitive).
+     * @param username the username to check
+     * @return true if user exists, false otherwise
+     */
+    boolean existsByUsernameIgnoreCase(String username);
+
+    /**
+     * Check if user exists by username (case-sensitive - for backward compatibility).
      * @param username the username to check
      * @return true if user exists, false otherwise
      */
     boolean existsByUsername(String username);
 
     /**
-     * Check if user exists by email.
+     * Check if user exists by email (case-insensitive).
+     * @param email the email to check
+     * @return true if user exists, false otherwise
+     */
+    boolean existsByEmailIgnoreCase(String email);
+
+    /**
+     * Check if user exists by email (case-sensitive - for backward compatibility).
      * @param email the email to check
      * @return true if user exists, false otherwise
      */

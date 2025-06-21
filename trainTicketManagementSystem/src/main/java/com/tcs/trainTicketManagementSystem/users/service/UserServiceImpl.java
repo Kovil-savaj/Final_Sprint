@@ -40,13 +40,13 @@ public class UserServiceImpl implements UserService {
     public UserResponse registerUser(UserRegistrationRequest request) {
         logger.info("Registering new user with username: {}", request.getUsername());
 
-        // Check if user already exists
-        if (userRepository.existsByUsername(request.getUsername())) {
+        // Check if user already exists (case-insensitive)
+        if (userRepository.existsByUsernameIgnoreCase(request.getUsername())) {
             logger.warn("User registration failed: username {} already exists", request.getUsername());
             throw UserAlreadyExistsException.withUsername(request.getUsername());
         }
 
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmailIgnoreCase(request.getEmail())) {
             logger.warn("User registration failed: email {} already exists", request.getEmail());
             throw UserAlreadyExistsException.withEmail(request.getEmail());
         }
@@ -70,9 +70,9 @@ public class UserServiceImpl implements UserService {
     public LoginResponse authenticateUser(LoginRequest request) {
         logger.info("Authenticating user with username/email: {}", request.getUsernameOrEmail());
 
-        // Try to find user by username or email
-        User user = userRepository.findByUsername(request.getUsernameOrEmail())
-                .orElseGet(() -> userRepository.findByEmail(request.getUsernameOrEmail())
+        // Try to find user by username or email (case-insensitive)
+        User user = userRepository.findByUsernameIgnoreCase(request.getUsernameOrEmail())
+                .orElseGet(() -> userRepository.findByEmailIgnoreCase(request.getUsernameOrEmail())
                         .orElse(null));
 
         if (user == null) {
@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserByUsername(String username) {
         logger.debug("Fetching user by username: {}", username);
         
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> {
                     logger.warn("User not found with username: {}", username);
                     return UserNotFoundException.withUsername(username);
@@ -130,7 +130,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserByEmail(String email) {
         logger.debug("Fetching user by email: {}", email);
         
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> {
                     logger.warn("User not found with email: {}", email);
                     return UserNotFoundException.withEmail(email);
@@ -199,25 +199,30 @@ public class UserServiceImpl implements UserService {
                     return UserNotFoundException.withId(userId);
                 });
 
-        // Check if new username/email already exists (excluding current user)
-        if (!user.getUsername().equals(request.getUsername()) && 
-            userRepository.existsByUsername(request.getUsername())) {
+        // Check if new username conflicts with existing user (case-insensitive)
+        if (!user.getUsername().equalsIgnoreCase(request.getUsername()) && 
+            userRepository.existsByUsernameIgnoreCase(request.getUsername())) {
             logger.warn("User update failed: username {} already exists", request.getUsername());
             throw UserAlreadyExistsException.withUsername(request.getUsername());
         }
 
-        if (!user.getEmail().equals(request.getEmail()) && 
-            userRepository.existsByEmail(request.getEmail())) {
+        // Check if new email conflicts with existing user (case-insensitive)
+        if (!user.getEmail().equalsIgnoreCase(request.getEmail()) && 
+            userRepository.existsByEmailIgnoreCase(request.getEmail())) {
             logger.warn("User update failed: email {} already exists", request.getEmail());
             throw UserAlreadyExistsException.withEmail(request.getEmail());
         }
 
         // Update user fields
         user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword())); // Encrypt password
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setRole(request.getRole());
+
+        // Update password only if provided
+        if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
 
         User updatedUser = userRepository.save(user);
         logger.info("User updated successfully with ID: {}", updatedUser.getUserId());
@@ -235,12 +240,11 @@ public class UserServiceImpl implements UserService {
                     return UserNotFoundException.withId(userId);
                 });
 
-        // Update password with new encrypted password
+        // Update password
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        
         User updatedUser = userRepository.save(user);
-        logger.info("Password reset successfully for user with ID: {}", updatedUser.getUserId());
-
+        
+        logger.info("Password reset successfully for user with ID: {}", userId);
         return new UserResponse(updatedUser);
     }
 
@@ -252,7 +256,7 @@ public class UserServiceImpl implements UserService {
             logger.warn("User not found with ID: {}", userId);
             throw UserNotFoundException.withId(userId);
         }
-
+        
         userRepository.deleteById(userId);
         logger.info("User deleted successfully with ID: {}", userId);
     }
@@ -260,12 +264,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
+        return userRepository.existsByUsernameIgnoreCase(username);
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
+        return userRepository.existsByEmailIgnoreCase(email);
     }
 } 
