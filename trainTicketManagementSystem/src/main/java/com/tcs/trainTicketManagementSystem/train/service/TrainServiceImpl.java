@@ -259,6 +259,26 @@ public class TrainServiceImpl implements TrainService {
             trains = trainRepository.findAll();
         }
         
+        // Apply journey date filter if provided
+        if (searchRequest.getJourneyDate() != null) {
+            // Get day of week for the journey date
+            java.time.DayOfWeek javaDayOfWeek = searchRequest.getJourneyDate().getDayOfWeek();
+            String dayOfWeekStr = javaDayOfWeek.name().substring(0, 3).toUpperCase();
+            
+            try {
+                DayOfWeek dayOfWeekEnum = DayOfWeek.valueOf(dayOfWeekStr);
+                // Filter trains that run on this specific day
+                trains = trains.stream()
+                        .filter(train -> train.getSchedules().stream()
+                                .anyMatch(schedule -> schedule.getDayOfWeek() == dayOfWeekEnum))
+                        .collect(Collectors.toList());
+                logger.debug("Filtered trains for day of week: {} ({} trains found)", dayOfWeekStr, trains.size());
+            } catch (IllegalArgumentException e) {
+                logger.warn("Invalid day of week conversion: {}", dayOfWeekStr);
+                return new ArrayList<>();
+            }
+        }
+        
         // Apply additional filters
         if (searchRequest.getDepartureTimeAfter() != null) {
             trains = trains.stream()
@@ -276,6 +296,14 @@ public class TrainServiceImpl implements TrainService {
             trains = trains.stream()
                     .filter(train -> train.getTrainName().toLowerCase().contains(searchRequest.getTrainName().toLowerCase()))
                     .collect(Collectors.toList());
+        }
+        
+        // Filter trains with available seats if journey date is provided
+        if (searchRequest.getJourneyDate() != null) {
+            trains = trains.stream()
+                    .filter(train -> train.getFareTypes().stream().anyMatch(fare -> fare.getSeatsAvailable() > 0))
+                    .collect(Collectors.toList());
+            logger.debug("Filtered trains with available seats: {} trains found", trains.size());
         }
         
         return trains.stream()
