@@ -144,4 +144,16 @@ public interface TrainRepository extends JpaRepository<Train, Long> {
     @Query("SELECT DISTINCT t FROM Train t JOIN t.fareTypes f WHERE f.seatsAvailable > 0 AND LOWER(t.source) = LOWER(:source) AND LOWER(t.destination) = LOWER(:destination)")
     List<Train> findTrainsWithAvailableSeatsForRoute(@Param("source") String source, 
                                                      @Param("destination") String destination);
+
+    /**
+     * Get all distinct source stations.
+     */
+    @Query("SELECT DISTINCT t.source FROM Train t ORDER BY t.source")
+    List<String> findDistinctSourceStations();
+
+    /**
+     * Get all distinct destination stations.
+     */
+    @Query("SELECT DISTINCT t.destination FROM Train t ORDER BY t.destination")
+    List<String> findDistinctDestinationStations();
 } 

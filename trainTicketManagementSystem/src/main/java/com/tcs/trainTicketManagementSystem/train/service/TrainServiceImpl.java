@@ -3,6 +3,7 @@ package com.tcs.trainTicketManagementSystem.train.service;
 import com.tcs.trainTicketManagementSystem.train.dto.TrainRequest;
 import com.tcs.trainTicketManagementSystem.train.dto.TrainResponse;
 import com.tcs.trainTicketManagementSystem.train.dto.TrainSearchRequest;
+import com.tcs.trainTicketManagementSystem.train.dto.StationListResponse;
 import com.tcs.trainTicketManagementSystem.train.exception.TrainAlreadyExistsException;
 import com.tcs.trainTicketManagementSystem.train.exception.TrainNotFoundException;
 import com.tcs.trainTicketManagementSystem.train.model.*;
@@ -385,6 +386,18 @@ public class TrainServiceImpl implements TrainService {
             logger.warn("Invalid day of week conversion: {}", dayOfWeekStr);
             return new ArrayList<>();
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public StationListResponse getDistinctStations() {
+        logger.debug("Fetching distinct source and destination stations");
+        
+        List<String> sourceStations = trainRepository.findDistinctSourceStations();
+        List<String> destinationStations = trainRepository.findDistinctDestinationStations();
+        
+        logger.debug("Found {} source stations and {} destination stations", sourceStations.size(), destinationStations.size());
+        return new StationListResponse(sourceStations, destinationStations);
     }
 
     // Helper methods

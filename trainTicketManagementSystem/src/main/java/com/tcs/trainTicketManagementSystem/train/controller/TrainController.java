@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tcs.trainTicketManagementSystem.train.dto.TrainRequest;
 import com.tcs.trainTicketManagementSystem.train.dto.TrainResponse;
 import com.tcs.trainTicketManagementSystem.train.dto.TrainSearchRequest;
+import com.tcs.trainTicketManagementSystem.train.dto.StationListResponse;
 import com.tcs.trainTicketManagementSystem.train.model.TrainStatus;
 import com.tcs.trainTicketManagementSystem.train.service.TrainService;
 
@@ -383,5 +384,17 @@ public class TrainController {
         logger.debug("Checking if train exists for route: {} to {}", source, destination);
         boolean exists = trainService.existsByRoute(source, destination);
         return ResponseEntity.ok(exists);
+    }
+
+    @GetMapping("/stations")
+    @Operation(summary = "Get all distinct stations", description = "Retrieves all distinct source and destination stations available in the system")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Stations retrieved successfully",
+            content = @Content(schema = @Schema(implementation = StationListResponse.class)))
+    })
+    public ResponseEntity<StationListResponse> getDistinctStations() {
+        logger.debug("Fetching distinct source and destination stations");
+        StationListResponse response = trainService.getDistinctStations();
+        return ResponseEntity.ok(response);
     }
 } 

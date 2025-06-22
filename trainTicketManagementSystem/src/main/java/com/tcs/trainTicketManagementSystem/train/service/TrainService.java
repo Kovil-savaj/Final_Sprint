@@ -3,6 +3,7 @@ package com.tcs.trainTicketManagementSystem.train.service;
 import com.tcs.trainTicketManagementSystem.train.dto.TrainRequest;
 import com.tcs.trainTicketManagementSystem.train.dto.TrainResponse;
 import com.tcs.trainTicketManagementSystem.train.dto.TrainSearchRequest;
+import com.tcs.trainTicketManagementSystem.train.dto.StationListResponse;
 import com.tcs.trainTicketManagementSystem.train.model.TrainStatus;
 
 import java.time.LocalDate;
@@ -122,4 +123,9 @@ public interface TrainService {
      * Get available trains for a specific journey date.
      */
     List<TrainResponse> getAvailableTrainsForDate(String source, String destination, LocalDate journeyDate);
+
+    /**
+     * Get all distinct source and destination stations.
+     */
+    StationListResponse getDistinctStations();
 } 
