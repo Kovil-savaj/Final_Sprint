@@ -227,4 +227,112 @@ INSERT INTO train_schedule (train_id, day_of_week) VALUES (21, 'TUE');
 INSERT INTO train_schedule (train_id, day_of_week) VALUES (21, 'SUN');
 INSERT INTO train_schedule (train_id, day_of_week) VALUES (21, 'FRI');
 
+-- Sample booking data with Indian names and cities
+-- Booking 1: Kovil Kumar & Priya Sharma - Delhi to Mumbai
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (2, 1, 2, '2025-06-25', '2025-06-22', 3000.00, 'CONFIRMED');
+
+-- Booking 2: Harshit Patel - Lucknow to Kolkata
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (2, 3, 6, '2025-06-26', '2025-06-22', 2108.00, 'CONFIRMED');
+
+-- Booking 3: Himanshu Singh & Jyoti Verma - Pune to Bangalore
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (1, 2, 4, '2025-06-27', '2025-06-22', 2572.00, 'CONFIRMED');
+
+-- Booking 4: Shubh Gupta & Esha Reddy - Lucknow to Ahmedabad
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (2, 5, 10, '2025-06-28', '2025-06-22', 4298.00, 'CONFIRMED');
+
+-- Booking 5: Jainam Shah - Pune to Jaipur
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (1, 6, 12, '2025-06-29', '2025-06-22', 5040.00, 'CONFIRMED');
+
+-- Booking 6: Aarav Mehta & Zara Khan - Lucknow to Pune
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (2, 7, 14, '2025-06-30', '2025-06-22', 918.00, 'CONFIRMED');
+
+-- Booking 7: Riya Malhotra - Delhi to Ahmedabad
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (1, 8, 16, '2025-07-01', '2025-06-22', 1592.00, 'CONFIRMED');
+
+-- Booking 8: Vikram Joshi & Ananya Desai - Mumbai to Lucknow
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (2, 9, 18, '2025-07-02', '2025-06-22', 3176.00, 'CONFIRMED');
+
+-- Booking 9: Aditya Rao - Delhi to Jaipur
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (1, 10, 20, '2025-07-03', '2025-06-22', 3216.00, 'CONFIRMED');
+
+-- Booking 10: Neha Iyer & Rahul Nair - Kolkata to Hyderabad
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (2, 13, 26, '2025-07-04', '2025-06-22', 5284.00, 'CONFIRMED');
+
+-- Booking 11: Kavya Menon - Hyderabad to Kolkata
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (1, 14, 28, '2025-07-05', '2025-06-22', 5172.00, 'CONFIRMED');
+
+-- Booking 12: Arjun Kapoor & Mira Patel - Bangalore to Mumbai
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (2, 15, 30, '2025-07-06', '2025-06-22', 5886.00, 'CONFIRMED');
+
+-- Booking 13: Siddharth Agarwal - Jaipur to Delhi
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (1, 18, 36, '2025-07-07', '2025-06-22', 666.00, 'CONFIRMED');
+
+-- Booking 14: Tanvi Sharma & Rohan Mehra - Delhi to Lucknow
+INSERT INTO booking (user_id, train_id, fare_type_id, journey_date, booking_date, total_fare, status) 
+VALUES (2, 20, 40, '2025-07-08', '2025-06-22', 4226.00, 'CONFIRMED');
+
+-- Sample passenger data for all bookings
+-- Passengers for Booking 1
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (1, 'Kovil Kumar', 25, 'MALE', '123456789001');
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (1, 'Priya Sharma', 23, 'FEMALE', '123456789002');
+
+-- Passengers for Booking 2
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (2, 'Harshit Patel', 28, 'MALE', '123456789003');
+
+-- Passengers for Booking 3
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (3, 'Himanshu Singh', 30, 'MALE', '123456789004');
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (3, 'Jyoti Verma', 27, 'FEMALE', '123456789005');
+
+-- Passengers for Booking 4
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (4, 'Shubh Gupta', 24, 'MALE', '123456789006');
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (4, 'Esha Reddy', 26, 'FEMALE', '123456789007');
+
+-- Passengers for Booking 5
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (5, 'Jainam Shah', 29, 'MALE', '123456789008');
+
+-- Passengers for Booking 6
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (6, 'Aarav Mehta', 22, 'MALE', '123456789009');
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (6, 'Zara Khan', 25, 'FEMALE', '123456789010');
+
+-- Passengers for Booking 7
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (7, 'Riya Malhotra', 31, 'FEMALE', '123456789011');
+
+-- Passengers for Booking 8
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (8, 'Vikram Joshi', 33, 'MALE', '123456789012');
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (8, 'Ananya Desai', 28, 'FEMALE', '123456789013');
+
+-- Passengers for Booking 9
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (9, 'Aditya Rao', 26, 'MALE', '123456789014');
+
+-- Passengers for Booking 10
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (10, 'Neha Iyer', 24, 'FEMALE', '123456789015');
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (10, 'Rahul Nair', 27, 'MALE', '123456789016');
+
+-- Passengers for Booking 11
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (11, 'Kavya Menon', 29, 'FEMALE', '123456789017');
+
+-- Passengers for Booking 12
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (12, 'Arjun Kapoor', 32, 'MALE', '123456789018');
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (12, 'Mira Patel', 25, 'FEMALE', '123456789019');
+
+-- Passengers for Booking 13
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (13, 'Siddharth Agarwal', 35, 'MALE', '123456789020');
+
+-- Passengers for Booking 14
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (14, 'Tanvi Sharma', 23, 'FEMALE', '123456789021');
+INSERT INTO passenger (booking_id, name, age, gender, id_proof) VALUES (14, 'Rohan Mehra', 26, 'MALE', '123456789022');
+
 
