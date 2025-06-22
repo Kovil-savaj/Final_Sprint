@@ -90,11 +90,12 @@ CREATE INDEX idx_passenger_booking ON passenger(booking_id);
 -- Insert sample data for testing (optional)
 -- Sample admin user (password: Admin@123 - BCrypt encrypted)
 INSERT INTO users (username, password, email, phone, role) 
-VALUES ('admin', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin@trainsystem.com', '9876543210', 'ADMIN');
+VALUES ('admin', '$2a$10$ijxBdk6zLT9LrnJYZ5CmROh0XPSbcOOeMmAbVyn3FAOglsxWgSUTu', 'Admin@12345', '9876543210', 'ADMIN');
 
--- Sample regular user (password: John@123 - BCrypt encrypted)
+-- Sample regular user (password: User@12345 - BCrypt encrypted)
+
 INSERT INTO users (username, password, email, phone, role) 
-VALUES ('john_doe', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'john.doe@email.com', '9876543211', 'USER');
+VALUES ('user', '$2a$10$/Mg49.uOPE72cKtVCMgxC..Dy635hOmi07DBRbCC7JSWFnGGiIslm', 'user@gmail.com', '9876543211', 'USER');
 
 -- Sample train
 INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) 
