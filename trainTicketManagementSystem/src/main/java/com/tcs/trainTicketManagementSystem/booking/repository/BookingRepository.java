@@ -102,4 +102,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // Check if booking exists by user ID and train ID and journey date
     @Query("SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END FROM Booking b WHERE b.user.userId = :userId AND b.train.trainId = :trainId AND b.journeyDate = :journeyDate")
     boolean existsByUserIdAndTrainIdAndJourneyDate(@Param("userId") Long userId, @Param("trainId") Long trainId, @Param("journeyDate") LocalDate journeyDate);
+
+    // Count bookings by status
+    long countByStatus(BookingStatus status);
+
+    // Sum total fare by status
+    @Query("SELECT SUM(b.totalFare) FROM Booking b WHERE b.status = :status")
+    java.math.BigDecimal sumTotalFareByStatus(@Param("status") BookingStatus status);
 } 

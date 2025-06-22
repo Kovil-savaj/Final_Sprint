@@ -1,6 +1,7 @@
 package com.tcs.trainTicketManagementSystem.users.repository;
 
 import com.tcs.trainTicketManagementSystem.users.model.User;
+import com.tcs.trainTicketManagementSystem.users.model.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -93,4 +94,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     @Query("SELECT u FROM User u WHERE LOWER(u.email) LIKE LOWER(CONCAT('%', :email, '%'))")
     List<User> findByEmailContainingIgnoreCase(@Param("email") String email);
+
+    /**
+     * Count users with USER role (excluding admin users).
+     * @return count of regular users
+     */
+    long countByRole(UserRole role);
 } 
