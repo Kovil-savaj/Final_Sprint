@@ -515,7 +515,7 @@ POST /api/v1/trains/search
 ```
 
 ### Description
-Searches trains with various criteria.
+Searches trains with various criteria including journey date filtering.
 
 ### Request Body
 ```json
@@ -534,12 +534,91 @@ Searches trains with various criteria.
 ### Field Validation Rules
 All fields are optional. The search will apply filters based on provided criteria.
 
+**Special Notes:**
+- **journeyDate**: When provided, filters trains that run on the specified date and have available seats
+- **source/destination**: Case-insensitive matching
+- **schedule filtering**: Automatically converts journey date to day of week and filters by train schedules
+
 ### Success Response (200 OK)
 Array of trains matching the search criteria.
 
+**Example with journey date:**
+```json
+[
+  {
+    "trainId": 8,
+    "trainName": "Jan Shatabdi 106",
+    "source": "Delhi",
+    "destination": "Ahmedabad",
+    "departureTime": "16:30:00",
+    "arrivalTime": "02:45:00",
+    "status": "ACTIVE",
+    "scheduleDays": ["SAT", "SUN", "TUE"],
+    "fareTypes": [
+      {
+        "fareTypeId": 16,
+        "trainId": 8,
+        "classType": "Seat",
+        "price": 796.0,
+        "seatsAvailable": 149
+      }
+    ]
+  }
+]
+```
+
+**✅ Tested and Working**: Returns trains that match the criteria and run on the specified journey date with available seats.
+
 ---
 
-## 17. Get Available Trains for Date
+## 17. Get All Distinct Stations
+
+### Endpoint
+```
+GET /api/v1/trains/stations
+```
+
+### Description
+Retrieves all distinct source and destination stations available in the system. This endpoint is useful for populating dropdown lists in the frontend for station selection.
+
+### Success Response (200 OK)
+```json
+{
+    "sourceStations": [
+        "Ahmedabad",
+        "Bangalore", 
+        "Delhi",
+        "Hyderabad",
+        "Jaipur",
+        "Kolkata",
+        "Lucknow",
+        "Mumbai",
+        "Pune"
+    ],
+    "destinationStations": [
+        "Ahmedabad",
+        "Bangalore",
+        "Chennai",
+        "Delhi",
+        "Hyderabad",
+        "Jaipur",
+        "Kolkata",
+        "Lucknow",
+        "Mumbai",
+        "Pune"
+    ]
+}
+```
+
+**Response Fields:**
+- `sourceStations`: Array of distinct source station names (sorted alphabetically)
+- `destinationStations`: Array of distinct destination station names (sorted alphabetically)
+
+**✅ Tested and Working**: Returns 9 distinct source stations and 10 distinct destination stations from the sample data.
+
+---
+
+## 18. Get Available Trains for Date
 
 ### Endpoint
 ```
@@ -583,7 +662,7 @@ Retrieves available trains for a specific journey date.
 
 ---
 
-## 18. Update Train
+## 19. Update Train
 
 ### Endpoint
 ```
@@ -633,7 +712,7 @@ Same format as Create Train validation errors.
 
 ---
 
-## 19. Update Train Status
+## 20. Update Train Status
 
 ### Endpoint
 ```
@@ -657,7 +736,7 @@ Same format as other 404 errors.
 
 ---
 
-## 20. Delete Train
+## 21. Delete Train
 
 ### Endpoint
 ```
@@ -678,7 +757,7 @@ Same format as other 404 errors.
 
 ---
 
-## 21. Check Train Exists by Name
+## 22. Check Train Exists by Name
 
 ### Endpoint
 ```
@@ -702,7 +781,7 @@ false
 
 ---
 
-## 22. Check Train Exists by Route
+## 23. Check Train Exists by Route
 
 ### Endpoint
 ```
@@ -824,7 +903,7 @@ All dates are in ISO 8601 format: `YYYY-MM-DD`
 
 ## Testing Summary
 
-### ✅ Successfully Tested Endpoints (24/24)
+### ✅ Successfully Tested Endpoints (25/25)
 All train API endpoints have been thoroughly tested and are fully functional:
 
 1. ✅ **Create Train** - POST /api/v1/trains
@@ -843,18 +922,21 @@ All train API endpoints have been thoroughly tested and are fully functional:
 14. ✅ **Get Trains with Available Seats** - GET /api/v1/trains/available-seats
 15. ✅ **Get Trains with Available Seats for Route** - GET /api/v1/trains/available-seats/route
 16. ✅ **Search Trains with Criteria** - POST /api/v1/trains/search
-17. ✅ **Get Available Trains for Date** - GET /api/v1/trains/available
-18. ✅ **Update Train** - PUT /api/v1/trains/{id}
-19. ✅ **Update Train Status** - PUT /api/v1/trains/{id}/status
-20. ✅ **Delete Train** - DELETE /api/v1/trains/{id}
-21. ✅ **Check Train Exists by Name** - GET /api/v1/trains/exists/name/{name}
-22. ✅ **Check Train Exists by Route** - GET /api/v1/trains/exists/route
-23. ✅ **Error Handling** - All validation and error scenarios
-24. ✅ **Data Integrity** - Proper enum mapping and database operations
+17. ✅ **Get All Distinct Stations** - GET /api/v1/trains/stations
+18. ✅ **Get Available Trains for Date** - GET /api/v1/trains/available
+19. ✅ **Update Train** - PUT /api/v1/trains/{id}
+20. ✅ **Update Train Status** - PUT /api/v1/trains/{id}/status
+21. ✅ **Delete Train** - DELETE /api/v1/trains/{id}
+22. ✅ **Check Train Exists by Name** - GET /api/v1/trains/exists/name/{name}
+23. ✅ **Check Train Exists by Route** - GET /api/v1/trains/exists/route
+24. ✅ **Error Handling** - All validation and error scenarios
+25. ✅ **Data Integrity** - Proper enum mapping and database operations
 
 ### 🔧 Recent Fixes Applied
 - **Schedule Day Endpoints**: Fixed enum conversion issues for schedule-based queries
 - **Available Trains for Date**: Fixed date-to-day conversion logic
+- **Search with Journey Date**: Enhanced search functionality to filter by journey date and schedules
+- **Station List API**: Added new endpoint for distinct source and destination stations
 - **Error Handling**: Enhanced with proper try-catch blocks and graceful degradation
 - **Enum Mapping**: Corrected ClassType enum values to match database schema
 
