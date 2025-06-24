@@ -1,6 +1,20 @@
 package com.tcs.trainTicketManagementSystem.booking.service;
 
-import com.tcs.trainTicketManagementSystem.booking.dto.*;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.tcs.trainTicketManagementSystem.booking.dto.BookingRequest;
+import com.tcs.trainTicketManagementSystem.booking.dto.BookingResponse;
+import com.tcs.trainTicketManagementSystem.booking.dto.BookingSearchRequest;
+import com.tcs.trainTicketManagementSystem.booking.dto.PassengerRequest;
+import com.tcs.trainTicketManagementSystem.booking.dto.PassengerResponse;
 import com.tcs.trainTicketManagementSystem.booking.exception.BookingNotFoundException;
 import com.tcs.trainTicketManagementSystem.booking.exception.BookingValidationException;
 import com.tcs.trainTicketManagementSystem.booking.exception.PassengerNotFoundException;
@@ -15,15 +29,6 @@ import com.tcs.trainTicketManagementSystem.train.repository.FareTypeRepository;
 import com.tcs.trainTicketManagementSystem.train.repository.TrainRepository;
 import com.tcs.trainTicketManagementSystem.users.model.User;
 import com.tcs.trainTicketManagementSystem.users.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service implementation for Booking and Passenger operations.
@@ -50,7 +55,6 @@ public class BookingServiceImpl implements BookingService {
     private FareTypeRepository fareTypeRepository;
 
     // Basic Booking Operations
-
     @Override
     public BookingResponse createBooking(BookingRequest request) {
         logger.info("Creating booking for user: {}, train: {}", request.getUserId(), request.getTrainId());
@@ -75,8 +79,8 @@ public class BookingServiceImpl implements BookingService {
 
         // Check seat availability
         if (fareType.getSeatsAvailable() < request.getPassengers().size()) {
-            throw new BookingValidationException("Not enough seats available. Available: " + 
-                                               fareType.getSeatsAvailable() + ", Required: " + request.getPassengers().size());
+            throw new BookingValidationException("Not enough seats available. Available: "
+                    + fareType.getSeatsAvailable() + ", Required: " + request.getPassengers().size());
         }
 
         // Create booking
@@ -85,9 +89,9 @@ public class BookingServiceImpl implements BookingService {
 
         // Create passengers
         List<Passenger> passengers = request.getPassengers().stream()
-                .map(passengerRequest -> new Passenger(savedBooking, passengerRequest.getName(), 
-                                                      passengerRequest.getAge(), passengerRequest.getGender(), 
-                                                      passengerRequest.getIdProof()))
+                .map(passengerRequest -> new Passenger(savedBooking, passengerRequest.getName(),
+                passengerRequest.getAge(), passengerRequest.getGender(),
+                passengerRequest.getIdProof()))
                 .collect(Collectors.toList());
 
         passengers = passengerRepository.saveAll(passengers);
@@ -104,17 +108,17 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponse getBookingById(Long bookingId) {
         logger.info("Getting booking by ID: {}", bookingId);
-        
+
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Booking with ID " + bookingId + " not found"));
-        
+
         return convertToBookingResponse(booking);
     }
 
     @Override
     public List<BookingResponse> getAllBookings() {
         logger.info("Getting all bookings");
-        
+
         List<Booking> bookings = bookingRepository.findAll();
         return bookings.stream()
                 .map(this::convertToBookingResponse)
@@ -124,7 +128,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingResponse> getBookingsByUserId(Long userId) {
         logger.info("Getting bookings for user ID: {}", userId);
-        
+
         List<Booking> bookings = bookingRepository.findByUserIdOrderByBookingDateDesc(userId);
         return bookings.stream()
                 .map(this::convertToBookingResponse)
@@ -134,7 +138,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingResponse> getBookingsByUserIdAndStatus(Long userId, BookingStatus status) {
         logger.info("Getting bookings for user ID: {} with status: {}", userId, status);
-        
+
         List<Booking> bookings = bookingRepository.findByUserIdAndStatusOrderByBookingDateDesc(userId, status);
         return bookings.stream()
                 .map(this::convertToBookingResponse)
@@ -144,7 +148,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingResponse> getUpcomingBookingsByUserId(Long userId) {
         logger.info("Getting upcoming bookings for user ID: {}", userId);
-        
+
         List<Booking> bookings = bookingRepository.findUpcomingBookingsByUserId(userId, LocalDate.now());
         return bookings.stream()
                 .map(this::convertToBookingResponse)
@@ -154,7 +158,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingResponse> getPastBookingsByUserId(Long userId) {
         logger.info("Getting past bookings for user ID: {}", userId);
-        
+
         List<Booking> bookings = bookingRepository.findPastBookingsByUserId(userId, LocalDate.now());
         return bookings.stream()
                 .map(this::convertToBookingResponse)
@@ -164,22 +168,22 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponse cancelBooking(Long bookingId) {
         logger.info("Cancelling booking with ID: {}", bookingId);
-        
+
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Booking with ID " + bookingId + " not found"));
-        
+
         if (booking.getStatus() == BookingStatus.CANCELLED) {
             throw new BookingValidationException("Booking is already cancelled");
         }
-        
+
         // Update seat availability
         FareType fareType = booking.getFareType();
         fareType.setSeatsAvailable(fareType.getSeatsAvailable() + booking.getPassengers().size());
         fareTypeRepository.save(fareType);
-        
+
         booking.setStatus(BookingStatus.CANCELLED);
         booking = bookingRepository.save(booking);
-        
+
         return convertToBookingResponse(booking);
     }
 
@@ -189,11 +193,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     // Basic Passenger Operations
-
     @Override
     public List<PassengerResponse> getPassengersByBookingId(Long bookingId) {
         logger.info("Getting passengers for booking ID: {}", bookingId);
-        
+
         List<Passenger> passengers = passengerRepository.findByBooking_BookingIdOrderByPassengerId(bookingId);
         return passengers.stream()
                 .map(this::convertToPassengerResponse)
@@ -203,41 +206,40 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public PassengerResponse getPassengerById(Long passengerId) {
         logger.info("Getting passenger by ID: {}", passengerId);
-        
+
         Passenger passenger = passengerRepository.findById(passengerId)
                 .orElseThrow(() -> new PassengerNotFoundException("Passenger with ID " + passengerId + " not found"));
-        
+
         return convertToPassengerResponse(passenger);
     }
 
     @Override
     public PassengerResponse getPassengerByIdProof(String idProof) {
         logger.info("Getting passenger by ID proof: {}", idProof);
-        
+
         Passenger passenger = passengerRepository.findByIdProof(idProof)
                 .orElseThrow(() -> new PassengerNotFoundException("Passenger with ID proof " + idProof + " not found"));
-        
+
         return convertToPassengerResponse(passenger);
     }
 
     // Helper Methods
-
     private void validateBookingRequest(BookingRequest request) {
         if (request.getJourneyDate().isBefore(LocalDate.now())) {
             throw new BookingValidationException("Journey date cannot be in the past");
         }
-        
+
         if (request.getPassengers().size() > 10) {
             throw new BookingValidationException("Maximum 10 passengers allowed per booking");
         }
     }
 
     private BookingResponse convertToBookingResponse(Booking booking) {
-        List<PassengerResponse> passengerResponses = booking.getPassengers() != null ?
-                booking.getPassengers().stream()
+        List<PassengerResponse> passengerResponses = booking.getPassengers() != null
+                ? booking.getPassengers().stream()
                         .map(this::convertToPassengerResponse)
                         .collect(Collectors.toList()) : null;
-        
+
         return new BookingResponse(
                 booking.getBookingId(),
                 booking.getUser().getUserId(),
@@ -247,7 +249,7 @@ public class BookingServiceImpl implements BookingService {
                 booking.getTrain().getSource(),
                 booking.getTrain().getDestination(),
                 booking.getTrain().getDepartureTime().toString(),
-                booking.getTrain().getArrivalTime().toString(),
+                booking.getTrain().getComputedArrivalTime().toString(),
                 booking.getFareType().getFareTypeId(),
                 booking.getFareType().getClassType().toString(),
                 booking.getFareType().getPrice(),
@@ -272,7 +274,6 @@ public class BookingServiceImpl implements BookingService {
 
     // Stub implementations for remaining methods
     // These can be implemented as needed
-
     @Override
     public List<BookingResponse> getBookingsByTrainId(Long trainId) {
         List<Booking> bookings = bookingRepository.findByTrainIdOrderByBookingDateDesc(trainId);
@@ -411,28 +412,28 @@ public class BookingServiceImpl implements BookingService {
     public PassengerResponse addPassengerToBooking(Long bookingId, PassengerRequest passengerRequest) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Booking with ID " + bookingId + " not found"));
-        
+
         if (booking.getStatus() == BookingStatus.CANCELLED) {
             throw new BookingValidationException("Cannot add passenger to cancelled booking");
         }
-        
+
         if (booking.getFareType().getSeatsAvailable() < 1) {
             throw new BookingValidationException("No seats available for this booking");
         }
-        
+
         if (passengerRepository.existsByBooking_BookingIdAndIdProof(bookingId, passengerRequest.getIdProof())) {
             throw new BookingValidationException("Passenger with ID proof " + passengerRequest.getIdProof() + " already exists in this booking");
         }
-        
-        Passenger passenger = new Passenger(booking, passengerRequest.getName(), 
-                                          passengerRequest.getAge(), passengerRequest.getGender(), 
-                                          passengerRequest.getIdProof());
+
+        Passenger passenger = new Passenger(booking, passengerRequest.getName(),
+                passengerRequest.getAge(), passengerRequest.getGender(),
+                passengerRequest.getIdProof());
         passenger = passengerRepository.save(passenger);
-        
+
         FareType fareType = booking.getFareType();
         fareType.setSeatsAvailable(fareType.getSeatsAvailable() - 1);
         fareTypeRepository.save(fareType);
-        
+
         return convertToPassengerResponse(passenger);
     }
 
@@ -440,22 +441,22 @@ public class BookingServiceImpl implements BookingService {
     public PassengerResponse updatePassenger(Long passengerId, PassengerRequest passengerRequest) {
         Passenger passenger = passengerRepository.findById(passengerId)
                 .orElseThrow(() -> new PassengerNotFoundException("Passenger with ID " + passengerId + " not found"));
-        
+
         if (passenger.getBooking().getStatus() == BookingStatus.CANCELLED) {
             throw new BookingValidationException("Cannot update passenger in cancelled booking");
         }
-        
-        if (!passenger.getIdProof().equals(passengerRequest.getIdProof()) && 
-            passengerRepository.existsByBooking_BookingIdAndIdProof(passenger.getBooking().getBookingId(), passengerRequest.getIdProof())) {
+
+        if (!passenger.getIdProof().equals(passengerRequest.getIdProof())
+                && passengerRepository.existsByBooking_BookingIdAndIdProof(passenger.getBooking().getBookingId(), passengerRequest.getIdProof())) {
             throw new BookingValidationException("Passenger with ID proof " + passengerRequest.getIdProof() + " already exists in this booking");
         }
-        
+
         passenger.setName(passengerRequest.getName());
         passenger.setAge(passengerRequest.getAge());
         passenger.setGender(passengerRequest.getGender());
         passenger.setIdProof(passengerRequest.getIdProof());
         passenger = passengerRepository.save(passenger);
-        
+
         return convertToPassengerResponse(passenger);
     }
 
@@ -463,13 +464,13 @@ public class BookingServiceImpl implements BookingService {
     public void deletePassenger(Long passengerId) {
         Passenger passenger = passengerRepository.findById(passengerId)
                 .orElseThrow(() -> new PassengerNotFoundException("Passenger with ID " + passengerId + " not found"));
-        
+
         if (passenger.getBooking().getStatus() == BookingStatus.CANCELLED) {
             throw new BookingValidationException("Cannot delete passenger from cancelled booking");
         }
-        
+
         passengerRepository.deleteById(passengerId);
-        
+
         FareType fareType = passenger.getBooking().getFareType();
         fareType.setSeatsAvailable(fareType.getSeatsAvailable() + 1);
         fareTypeRepository.save(fareType);
@@ -497,24 +498,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private boolean matchesSearchCriteria(Booking booking, BookingSearchRequest searchRequest) {
-        if (searchRequest.getUserId() != null && !booking.getUser().getUserId().equals(searchRequest.getUserId())) {
-            return false;
-        }
-        if (searchRequest.getTrainId() != null && !booking.getTrain().getTrainId().equals(searchRequest.getTrainId())) {
-            return false;
-        }
-        if (searchRequest.getFareTypeId() != null && !booking.getFareType().getFareTypeId().equals(searchRequest.getFareTypeId())) {
-            return false;
-        }
-        if (searchRequest.getJourneyDateFrom() != null && booking.getJourneyDate().isBefore(searchRequest.getJourneyDateFrom())) {
-            return false;
-        }
-        if (searchRequest.getJourneyDateTo() != null && booking.getJourneyDate().isAfter(searchRequest.getJourneyDateTo())) {
-            return false;
-        }
-        if (searchRequest.getStatus() != null && !booking.getStatus().toString().equals(searchRequest.getStatus())) {
-            return false;
-        }
-        return true;
+        return (searchRequest.getUserId() == null || booking.getUser().getUserId().equals(searchRequest.getUserId())) &&
+               (searchRequest.getTrainId() == null || booking.getTrain().getTrainId().equals(searchRequest.getTrainId())) &&
+               (searchRequest.getFareTypeId() == null || booking.getFareType().getFareTypeId().equals(searchRequest.getFareTypeId())) &&
+               (searchRequest.getJourneyDateFrom() == null || !booking.getJourneyDate().isBefore(searchRequest.getJourneyDateFrom())) &&
+               (searchRequest.getJourneyDateTo() == null || !booking.getJourneyDate().isAfter(searchRequest.getJourneyDateTo())) &&
+               (searchRequest.getStatus() == null || booking.getStatus().toString().equals(searchRequest.getStatus()));
     }
-} 
+}

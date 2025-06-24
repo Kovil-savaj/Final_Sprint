@@ -1,15 +1,15 @@
 package com.tcs.trainTicketManagementSystem.booking.repository;
 
-import com.tcs.trainTicketManagementSystem.booking.model.Booking;
-import com.tcs.trainTicketManagementSystem.booking.model.BookingStatus;
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import com.tcs.trainTicketManagementSystem.booking.model.Booking;
+import com.tcs.trainTicketManagementSystem.booking.model.BookingStatus;
 
 /**
  * Repository interface for Booking entity.

@@ -27,7 +27,8 @@ CREATE TABLE train (
     source VARCHAR(100) NOT NULL,
     destination VARCHAR(100) NOT NULL,
     departure_time TIME NOT NULL,
-    arrival_time TIME NOT NULL,
+    journey_hours INT NOT NULL,
+    journey_minutes INT NOT NULL,
     status VARCHAR(10) DEFAULT 'ACTIVE'
 );
 
@@ -98,8 +99,8 @@ INSERT INTO users (username, password, email, phone, role)
 VALUES ('user', '$2a$10$/Mg49.uOPE72cKtVCMgxC..Dy635hOmi07DBRbCC7JSWFnGGiIslm', 'user@gmail.com', '9876543211', 'USER');
 
 -- Sample train
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) 
-VALUES ('Rajdhani Express', 'Delhi', 'Mumbai', '08:00:00', '20:00:00', 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) 
+VALUES ('Rajdhani Express', 'Delhi', 'Mumbai', '08:00:00', 12, 0, 'ACTIVE');
 
 -- Sample train schedule
 INSERT INTO train_schedule (train_id, day_of_week) 
@@ -110,26 +111,26 @@ INSERT INTO fare_type (train_id, class_type, price, seats_available)
 VALUES (1, '1AC', 2500.00, 50), (1, '2AC', 1500.00, 100), (1, 'SL', 800.00, 200);
 
 -- Additional sample trains for comprehensive testing
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Garib Rath 100', 'Pune', 'Bangalore', '18:15:00', '02:45:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Vande Bharat 101', 'Lucknow', 'Kolkata', '05:00:00', '11:45:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Tejas Express 102', 'Ahmedabad', 'Jaipur', '19:30:00', '00:45:00', 'INACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Double Decker 103', 'Lucknow', 'Ahmedabad', '20:45:00', '04:30:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Vande Bharat 104', 'Pune', 'Jaipur', '11:30:00', '21:00:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Rajdhani Express 105', 'Lucknow', 'Pune', '05:15:00', '14:45:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Jan Shatabdi 106', 'Delhi', 'Ahmedabad', '16:30:00', '02:45:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Jan Shatabdi 107', 'Mumbai', 'Lucknow', '04:00:00', '14:45:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Intercity Express 108', 'Delhi', 'Jaipur', '21:00:00', '04:15:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Garib Rath 109', 'Pune', 'Kolkata', '08:15:00', '13:45:00', 'INACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Shatabdi Express 110', 'Hyderabad', 'Ahmedabad', '16:30:00', '04:30:00', 'INACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Humsafar Express 111', 'Kolkata', 'Hyderabad', '03:45:00', '15:00:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Jan Shatabdi 112', 'Hyderabad', 'Kolkata', '14:00:00', '23:45:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Double Decker 113', 'Bangalore', 'Mumbai', '23:15:00', '10:30:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Intercity Express 114', 'Ahmedabad', 'Mumbai', '15:00:00', '22:15:00', 'INACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Garib Rath 115', 'Pune', 'Kolkata', '20:15:00', '02:45:00', 'INACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Duronto Express 116', 'Jaipur', 'Delhi', '10:00:00', '19:15:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Intercity Express 117', 'Kolkata', 'Chennai', '11:00:00', '20:15:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Humsafar Express 118', 'Delhi', 'Lucknow', '00:45:00', '07:45:00', 'ACTIVE');
-INSERT INTO train (train_name, source, destination, departure_time, arrival_time, status) VALUES ('Duronto Express 119', 'Mumbai', 'Bangalore', '03:30:00', '10:45:00', 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Garib Rath 100', 'Pune', 'Bangalore', '18:15:00', 6, 45, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Vande Bharat 101', 'Lucknow', 'Kolkata', '05:00:00', 6, 45, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Tejas Express 102', 'Ahmedabad', 'Jaipur', '19:30:00', 5, 15, 'INACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Double Decker 103', 'Lucknow', 'Ahmedabad', '20:45:00', 3, 45, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Vande Bharat 104', 'Pune', 'Jaipur', '11:30:00', 10, 0, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Rajdhani Express 105', 'Lucknow', 'Pune', '05:15:00', 9, 30, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Jan Shatabdi 106', 'Delhi', 'Ahmedabad', '16:30:00', 6, 0, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Jan Shatabdi 107', 'Mumbai', 'Lucknow', '04:00:00', 10, 45, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Intercity Express 108', 'Delhi', 'Jaipur', '21:00:00', 3, 15, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Garib Rath 109', 'Pune', 'Kolkata', '08:15:00', 5, 30, 'INACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Shatabdi Express 110', 'Hyderabad', 'Ahmedabad', '16:30:00', 6, 0, 'INACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Humsafar Express 111', 'Kolkata', 'Hyderabad', '03:45:00', 9, 15, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Jan Shatabdi 112', 'Hyderabad', 'Kolkata', '14:00:00', 9, 45, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Double Decker 113', 'Bangalore', 'Mumbai', '23:15:00', 7, 15, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Intercity Express 114', 'Ahmedabad', 'Mumbai', '15:00:00', 7, 15, 'INACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Garib Rath 115', 'Pune', 'Kolkata', '20:15:00', 4, 30, 'INACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Duronto Express 116', 'Jaipur', 'Delhi', '10:00:00', 9, 15, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Intercity Express 117', 'Kolkata', 'Chennai', '11:00:00', 9, 15, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Humsafar Express 118', 'Delhi', 'Lucknow', '00:45:00', 7, 0, 'ACTIVE');
+INSERT INTO train (train_name, source, destination, departure_time, journey_hours, journey_minutes, status) VALUES ('Duronto Express 119', 'Mumbai', 'Bangalore', '03:30:00', 7, 15, 'ACTIVE');
 
 -- Additional fare types for comprehensive testing
 INSERT INTO fare_type (train_id, class_type, price, seats_available) VALUES (2, '2AC', 1286, 99);

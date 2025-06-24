@@ -1,8 +1,19 @@
 package com.tcs.trainTicketManagementSystem.train.model;
 
-import jakarta.persistence.*;
 import java.time.LocalTime;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 /**
  * Entity representing a train in the system.
@@ -28,8 +39,11 @@ public class Train {
     @Column(name = "departure_time", nullable = false)
     private LocalTime departureTime;
 
-    @Column(name = "arrival_time", nullable = false)
-    private LocalTime arrivalTime;
+    @Column(name = "journey_hours", nullable = false)
+    private int journeyHours;
+
+    @Column(name = "journey_minutes", nullable = false)
+    private int journeyMinutes;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 10)
@@ -43,15 +57,17 @@ public class Train {
     private List<FareType> fareTypes;
 
     // Default constructor
-    public Train() {}
+    public Train() {
+    }
 
     // Constructor with all fields
-    public Train(String trainName, String source, String destination, LocalTime departureTime, LocalTime arrivalTime, TrainStatus status) {
+    public Train(String trainName, String source, String destination, LocalTime departureTime, int journeyHours, int journeyMinutes, TrainStatus status) {
         this.trainName = trainName;
         this.source = source;
         this.destination = destination;
         this.departureTime = departureTime;
-        this.arrivalTime = arrivalTime;
+        this.journeyHours = journeyHours;
+        this.journeyMinutes = journeyMinutes;
         this.status = status != null ? status : TrainStatus.ACTIVE;
     }
 
@@ -96,12 +112,20 @@ public class Train {
         this.departureTime = departureTime;
     }
 
-    public LocalTime getArrivalTime() {
-        return arrivalTime;
+    public int getJourneyHours() {
+        return journeyHours;
     }
 
-    public void setArrivalTime(LocalTime arrivalTime) {
-        this.arrivalTime = arrivalTime;
+    public void setJourneyHours(int journeyHours) {
+        this.journeyHours = journeyHours;
+    }
+
+    public int getJourneyMinutes() {
+        return journeyMinutes;
+    }
+
+    public void setJourneyMinutes(int journeyMinutes) {
+        this.journeyMinutes = journeyMinutes;
     }
 
     public TrainStatus getStatus() {
@@ -128,16 +152,33 @@ public class Train {
         this.fareTypes = fareTypes;
     }
 
+    /**
+     * Computes the arrival time based on departure time and journey duration.
+     */
+    public LocalTime getComputedArrivalTime() {
+        return departureTime.plusHours(journeyHours).plusMinutes(journeyMinutes);
+    }
+
+    /**
+     * Computes the number of days spanned by the journey (0 = same day, 1 =
+     * next day, etc.).
+     */
+    public int getArrivalDayOffset() {
+        int totalMinutes = departureTime.getHour() * 60 + departureTime.getMinute() + journeyHours * 60 + journeyMinutes;
+        return totalMinutes / (24 * 60);
+    }
+
     @Override
     public String toString() {
-        return "Train{" +
-                "trainId=" + trainId +
-                ", trainName='" + trainName + '\'' +
-                ", source='" + source + '\'' +
-                ", destination='" + destination + '\'' +
-                ", departureTime=" + departureTime +
-                ", arrivalTime=" + arrivalTime +
-                ", status=" + status +
-                '}';
+        return "Train{"
+                + "trainId=" + trainId
+                + ", trainName='" + trainName + '\''
+                + ", source='" + source + '\''
+                + ", destination='" + destination + '\''
+                + ", departureTime=" + departureTime
+                + ", journeyHours=" + journeyHours
+                + ", journeyMinutes=" + journeyMinutes
+                + ", status=" + status
+                + '}';
     }
-} 
+}

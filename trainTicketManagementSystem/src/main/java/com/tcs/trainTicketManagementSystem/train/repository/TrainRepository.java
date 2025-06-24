@@ -1,16 +1,17 @@
 package com.tcs.trainTicketManagementSystem.train.repository;
 
-import com.tcs.trainTicketManagementSystem.train.model.Train;
-import com.tcs.trainTicketManagementSystem.train.model.TrainStatus;
-import com.tcs.trainTicketManagementSystem.train.model.DayOfWeek;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
+import com.tcs.trainTicketManagementSystem.train.model.DayOfWeek;
+import com.tcs.trainTicketManagementSystem.train.model.Train;
+import com.tcs.trainTicketManagementSystem.train.model.TrainStatus;
 
 /**
  * Repository interface for Train entity operations.
@@ -39,7 +40,8 @@ public interface TrainRepository extends JpaRepository<Train, Long> {
     List<Train> findBySourceIgnoreCaseAndDestinationIgnoreCase(String source, String destination);
 
     /**
-     * Find trains by source and destination (case-sensitive - for backward compatibility).
+     * Find trains by source and destination (case-sensitive - for backward
+     * compatibility).
      */
     List<Train> findBySourceAndDestination(String source, String destination);
 
@@ -69,7 +71,8 @@ public interface TrainRepository extends JpaRepository<Train, Long> {
     List<Train> findBySourceIgnoreCaseAndDestinationIgnoreCaseAndStatus(String source, String destination, TrainStatus status);
 
     /**
-     * Find trains by source, destination, and status (case-sensitive - for backward compatibility).
+     * Find trains by source, destination, and status (case-sensitive - for
+     * backward compatibility).
      */
     List<Train> findBySourceAndDestinationAndStatus(String source, String destination, TrainStatus status);
 
@@ -77,11 +80,6 @@ public interface TrainRepository extends JpaRepository<Train, Long> {
      * Find trains by departure time range.
      */
     List<Train> findByDepartureTimeBetween(LocalTime startTime, LocalTime endTime);
-
-    /**
-     * Find trains by arrival time range.
-     */
-    List<Train> findByArrivalTimeBetween(LocalTime startTime, LocalTime endTime);
 
     /**
      * Search trains by name containing pattern (case-insensitive).
@@ -104,7 +102,8 @@ public interface TrainRepository extends JpaRepository<Train, Long> {
     boolean existsByTrainNameIgnoreCase(String trainName);
 
     /**
-     * Check if train exists by name (case-sensitive - for backward compatibility).
+     * Check if train exists by name (case-sensitive - for backward
+     * compatibility).
      */
     boolean existsByTrainName(String trainName);
 
@@ -114,7 +113,8 @@ public interface TrainRepository extends JpaRepository<Train, Long> {
     boolean existsBySourceIgnoreCaseAndDestinationIgnoreCase(String source, String destination);
 
     /**
-     * Check if train exists by source and destination (case-sensitive - for backward compatibility).
+     * Check if train exists by source and destination (case-sensitive - for
+     * backward compatibility).
      */
     boolean existsBySourceAndDestination(String source, String destination);
 
@@ -128,9 +128,9 @@ public interface TrainRepository extends JpaRepository<Train, Long> {
      * Find trains with schedules for specific day and route (case-insensitive).
      */
     @Query("SELECT DISTINCT t FROM Train t JOIN t.schedules s WHERE s.dayOfWeek = :dayOfWeek AND LOWER(t.source) = LOWER(:source) AND LOWER(t.destination) = LOWER(:destination)")
-    List<Train> findTrainsByScheduleDayAndRoute(@Param("dayOfWeek") DayOfWeek dayOfWeek, 
-                                               @Param("source") String source, 
-                                               @Param("destination") String destination);
+    List<Train> findTrainsByScheduleDayAndRoute(@Param("dayOfWeek") DayOfWeek dayOfWeek,
+            @Param("source") String source,
+            @Param("destination") String destination);
 
     /**
      * Find trains with available seats.
@@ -142,8 +142,8 @@ public interface TrainRepository extends JpaRepository<Train, Long> {
      * Find trains with available seats for specific route (case-insensitive).
      */
     @Query("SELECT DISTINCT t FROM Train t JOIN t.fareTypes f WHERE f.seatsAvailable > 0 AND LOWER(t.source) = LOWER(:source) AND LOWER(t.destination) = LOWER(:destination)")
-    List<Train> findTrainsWithAvailableSeatsForRoute(@Param("source") String source, 
-                                                     @Param("destination") String destination);
+    List<Train> findTrainsWithAvailableSeatsForRoute(@Param("source") String source,
+            @Param("destination") String destination);
 
     /**
      * Get all distinct source stations.
@@ -161,4 +161,4 @@ public interface TrainRepository extends JpaRepository<Train, Long> {
      * Count trains by status.
      */
     long countByStatus(TrainStatus status);
-} 
+}
